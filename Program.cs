@@ -40,7 +40,7 @@ class Program{
             Console.WriteLine("1 - Adicionar Cliente -");
             Console.WriteLine("2 - Listar clientes -");
             Console.WriteLine("3 - Adicionar Conta -");
-            Console.WriteLine("4 - Listar contas -");
+            Console.WriteLine("4 - Listar contas -"); 
             Console.WriteLine("5 - Realizar Transacao -");
             Console.WriteLine("6 - Listar transacoes -");
             Console.WriteLine("7 - Depositar em uma conta -");
@@ -104,7 +104,58 @@ class Program{
                         Console.WriteLine($"{g} - Numero da conta: {contaRep.numero}, CPF do proprietario: {(contaRep.cliente != null ? contaRep.cliente.cpf : "N/A")} Saldo da conta: R$:{contaRep.saldo}");
                         g++;
                     }
-                    break;
+                    int r = 1;
+                    while(r!=0){
+                        Console.WriteLine($"\nSelecione uma conta(0 para voltar): \n");
+                        r = Convert.ToInt32(Console.ReadLine());
+                        if(r!=0){
+                            Conta selecConta = contaRepository.GetByNumero(r);
+                            Console.WriteLine($"\n~~~~~~ Conta: {r} ~~~~~~\n");
+                            Console.WriteLine($"ID da conta: {selecConta.contaId}");
+                            Console.WriteLine($"Numero da conta: {selecConta.numero}");
+                            Console.WriteLine($"Saldo da conta: {selecConta.saldo}");
+                            Console.WriteLine($"Nome do cliente proprietario: {selecConta.cliente.nome}");
+                            Console.WriteLine($"CPF do cliente proprietario: {selecConta.clienteCPF}");
+                            string opc =Console.ReadLine();
+                            opc = opc.ToLower();
+
+                            switch (opc)
+                            {
+                                case "deletar":
+                                    contaRepository.Delete(selecConta.clienteId);
+                                    if (contaRepository.Delete(selecConta.clienteId) == true)
+                                    {
+                                        Console.WriteLine($"Conta excluida com sucesso.");
+                                        
+                                    }else{Console.WriteLine($"Erro ao excluir conta!");}
+                                    break;
+                                case "modificar":
+                                    Console.WriteLine($"Trocar proprietario?(S/N)");
+                                    string trcP = Console.ReadLine().ToLower();
+                                    string cpfNew;
+                                    if ( trcP == "s"){
+                                        Console.WriteLine($"Informe o CPF do novo proprietario: ");
+                                        cpfNew = Console.ReadLine();
+                                        
+                                    }else
+                                    {
+                                        break;
+                                    }
+                                    selecConta.clienteCPF = cpfNew;
+                                    selecConta.cliente = clienteRepository.GetByCPF(cpfNew);
+                                    
+                                    contaRepository.Update(selecConta);
+                                    
+                                    break;
+                                case "voltar":
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                    
+                break;
                 case 5:
                     Console.WriteLine("\n~~~~~~ Realizar uma Transacao ~~~~~~\n");
                     Console.WriteLine($"Insira o ID da conta de origem: ");
